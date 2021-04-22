@@ -1,18 +1,35 @@
-import React from 'react';
-import { AppBar, IconButton, Toolbar, Typography } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
+import {
+  AppBar,
+  createStyles,
+  IconButton,
+  makeStyles,
+  Toolbar,
+  Typography
+} from '@material-ui/core';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
+import SearchInput from '../searchInput/SearchInput';
+import { useLocation, useHistory } from 'react-router';
 
 function CustomAppBar() {
-  console.log(window.location.pathname);
+  const classes = useStyles();
+
+  const [showBack, setShowBack] = useState<boolean>(false);
+  const location = useLocation();
+  const history = useHistory();
+
+  useEffect(() => {
+    setShowBack(location.pathname.includes('pokemon'));
+  }, [location.pathname]);
 
   function goBack() {
-    window.history.back();
+    history.push('/');
   }
 
   return (
-    <AppBar position="static">
-      <Toolbar>
-        {window.location.pathname.includes('pokemon') && (
+    <AppBar position="sticky">
+      <Toolbar className={classes.toolbar}>
+        {showBack && (
           <IconButton
             onClick={goBack}
             edge="start"
@@ -22,10 +39,23 @@ function CustomAppBar() {
             <ArrowBackIosRoundedIcon />
           </IconButton>
         )}
+
+        {!showBack && <SearchInput />}
+
         <Typography variant="h6">Pokedex</Typography>
       </Toolbar>
     </AppBar>
   );
 }
+
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    toolbar: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      flexDirection: 'row'
+    }
+  })
+);
 
 export default CustomAppBar;
