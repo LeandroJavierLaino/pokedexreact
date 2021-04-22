@@ -14,8 +14,7 @@ import { useParams } from 'react-router';
 import { getPokemon } from '../../lib/api';
 
 function Pokemon() {
-  // TODO: Make type from this
-  const params: { name: string } = useParams();
+  const params: PokemonScreenParams = useParams();
 
   const [pokemon, setPokemon] = useState<PokemonCard>({
     id: 0,
@@ -28,19 +27,18 @@ function Pokemon() {
   useEffect(() => {
     const retrievePokemon = async () => {
       const poke = await getPokemon(params.name);
-
       setPokemon({
         id: poke.id,
         name: poke.name,
         sprites: poke.sprites,
         height: poke.height,
         weight: poke.weight,
-        // make ability type
-        skills: poke.abilities.map((ability: any) => {
+        skills: poke.abilities.map((ability: AbilitySlot) => {
           return {
             name: ability.ability.name
           };
-        })
+        }),
+        types: poke.types
       });
     };
 
@@ -64,22 +62,24 @@ function Pokemon() {
       <CardContent>
         <Divider />
         <Divider />
-        <Divider />
         <Typography>{'Physical Characteristics'}</Typography>
-        <Divider />
+        <Divider light />
         <Typography>{`Weight : ${pokemon.weight}`}</Typography>
         <Typography>{`Height : ${pokemon.height}`}</Typography>
         <Divider />
         <Divider />
-        <Divider />
         <Typography>{'Skills'}</Typography>
-        <Divider />
+        <Divider light />
         {pokemon.skills?.map((skill: Skill, index: number) => (
           <Typography>{`[${index}] : ${skill.name}`}</Typography>
         ))}
         <Divider />
         <Divider />
-        <Divider />
+        <Typography>{'Types'}</Typography>
+        <Divider light />
+        {pokemon.types?.map((type: TypeSlot, index: number) => (
+          <Typography>{`[${index}] : ${type.type.name}`}</Typography>
+        ))}
       </CardContent>
     </Card>
   );
